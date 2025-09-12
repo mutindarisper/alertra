@@ -1,0 +1,15 @@
+import axios from 'axios';
+
+const fetchCohereResponse = async (query) => {
+  const response = await axios.post('https://api.cohere.ai/v1/generate', {
+    prompt: query,
+    max_tokens: 100,
+    model: 'command-xlarge-2022-11-01',  // Example model
+  }, {
+    headers: {
+      'Authorization': `Bearer YOUR_COHERE_API_KEY`,
+    },
+  });
+
+  return response.data;
+};
