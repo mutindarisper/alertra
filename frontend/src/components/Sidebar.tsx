@@ -1,121 +1,105 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import { Activity, CloudRain, Flame, Globe, Mountain, Waves } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { useSidebar } from "../context/sidebar-context"
-import world from "../assets/icons/world.svg"
-import floods from "../assets/icons/flood.svg"
-import earthquakes from "../assets/icons/earthquake.svg"
-import tsunamis from "../assets/icons/tsunami.svg"
-import volcanoes from "../assets/icons/volcano.svg"
-import wildfires from "../assets/icons/fire.svg"
+
+export const menuItems: { name: string; icon: LucideIcon }[] = [
+  { name: "Overview", icon: Globe },
+  { name: "Floods", icon: CloudRain },
+  { name: "Earthquakes", icon: Activity },
+  { name: "Tsunamis", icon: Waves },
+  { name: "Volcanoes", icon: Mountain },
+  { name: "Wildfires", icon: Flame },
+]
 
 const Sidebar: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const { activeItem, setActiveItem } = useSidebar()
+  const { activeItem, setActiveItem, isSidebarOpen, setSidebarOpen } = useSidebar()
 
-  // Detect the screen size to automatically collapse on small screens
+  // The drawer is only an overlay below `md`; make sure it can never be left
+  // stuck open when the layout grows into the static sidebar.
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsCollapsed(true) // Collapse sidebar on small screens
-      } else {
-        setIsCollapsed(false) // Expand sidebar on larger screens
-      }
+      if (window.innerWidth >= 768) setSidebarOpen(false)
     }
 
     window.addEventListener("resize", handleResize)
-
-    // Initial check on load
-    handleResize()
-
     return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  const menuItems = [
-    { name: "Overview", icon: world, isCollapsed: true },
-    { name: "Floods", icon: floods, isCollapsed: true },
-    { name: "Earthquakes", icon: earthquakes, isCollapsed: true },
-    { name: "Tsunamis", icon: tsunamis, isCollapsed: true },
-    { name: "Volcanoes", icon: volcanoes },
-    { name: "Wildfires", icon: wildfires },
-  ]
+  }, [setSidebarOpen])
 
   const handleMenuItemClick = (itemName: string) => {
     setActiveItem(itemName)
-    console.log(itemName)
+    setSidebarOpen(false)
   }
 
-  const footerItems = [
-    { name: "Help", icon: "fas fa-question-circle", link: "#" },
-    { name: "Feedback", icon: "fas fa-comment-dots", link: "#" },
-    {
-      name: "Signout",
-      icon: "",
-      link: "#",
-      profileImg: "https://via.placeholder.com/36",
-    },
-  ]
-
   return (
-    <aside
-      className={`bg-gray-900 flex flex-col justify-between p-6 transition-all duration-300 ${
-        isCollapsed ? "w-20" : "w-64"
-      } md:w-64`}
-    >
-      {/* Sidebar Menu */}
-      <div>
-        <button
-          onClick={() => setIsCollapsed((prev) => !prev)}
-          className="text-white flex flex-col space-y-1 md:hidden"
-        >
-          <div className="w-6 h-1 bg-white"></div>
-          <div className="w-6 h-1 bg-white"></div>
-          <div className="w-6 h-1 bg-white"></div>
-        </button>
+    <>
+      {/* Backdrop for the mobile drawer */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="absolute inset-0 z-30 bg-slate-900/30 backdrop-blur-[1px] md:hidden"
+          aria-hidden="true"
+        />
+      )}
 
-        <ul className="space-y-8">
-          {menuItems.map((item, index) => (
-            <li
-              key={index}
-              onClick={() => handleMenuItemClick(item.name)}
-              className={`flex items-center space-x-2 cursor-pointer ${
-                activeItem === item.name
-                  ? "text-white bg-slate-700 rounded-lg p-2"
-                  : "text-gray-400 hover:text-white transition"
-              }`}
-            >
-              <img
-                src={item.icon || "/placeholder.svg"}
-                className={`w-6 h-6 ${isCollapsed ? "hidden" : ""}`}
-                alt={item.name}
-              />
-              <span className={`${isCollapsed ? "hidden" : ""}`}>{item.name}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <aside
+        className={`absolute inset-y-0 left-0 z-40 flex w-64 flex-col justify-between border-r border-slate-200 bg-white p-4 transition-transform duration-300 md:static md:w-20 md:translate-x-0 lg:w-64 lg:p-6 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <nav className="min-h-0 flex-1 overflow-y-auto scrollbar-slim">
+          <ul className="space-y-1.5">
+            {menuItems.map((item) => {
+              const Icon = item.icon
+              const isActive = activeItem === item.name
 
-      {/* Footer Menu */}
-      <div className="space-y-4">
-        {footerItems.map((item, index) => (
-          <a
-            key={index}
-            href={item.link}
-            className="flex items-center space-x-2 text-gray-400 hover:text-white transition"
-          >
-            {item.profileImg ? (
-              <div className="flex items-center justify-center w-9 h-9 rounded-full border font-semibold">RM</div>
-            ) : (
-              <i className={item.icon}></i>
-            )}
-            <span className={`${isCollapsed ? "hidden" : ""}`}>{item.name}</span>
-          </a>
-        ))}
-      </div>
-    </aside>
+              return (
+                <li key={item.name}>
+                  <button
+                    type="button"
+                    title={item.name}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => handleMenuItemClick(item.name)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition md:justify-center lg:justify-start ${
+                      isActive
+                        ? "bg-brand-50 text-brand-700 ring-1 ring-brand-200"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-5 w-5 flex-shrink-0 ${isActive ? "text-brand-600" : "text-slate-400"}`}
+                    />
+                    <span className="inline md:hidden lg:inline">{item.name}</span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+
+        {/* Hidden on the tablet icon rail, where there is no room for the label. */}
+        <div className="mt-4 block flex-shrink-0 border-t border-slate-200 pt-4 md:hidden lg:block">
+          <div className="flex items-center gap-3">
+            <span className="h-2 w-2 flex-shrink-0 rounded-full bg-brand-500" />
+            <p className="text-xs leading-tight text-slate-500">
+              Data from{" "}
+              <a
+                href="https://www.gdacs.org"
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-brand-700 hover:underline"
+              >
+                GDACS
+              </a>
+            </p>
+          </div>
+        </div>
+      </aside>
+    </>
   )
 }
 
 export default Sidebar
-

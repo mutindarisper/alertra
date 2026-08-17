@@ -1,20 +1,19 @@
 import React from 'react';
-import './index.css'
+import './index.css';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
-// import LandingPage from './components/LandingPage';
+import { SidebarProvider } from './context/sidebar-context';
 
 const App: React.FC = () => {
   return (
-    <>
-    <Navbar />
-    {/* <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100"> */}
-
-      <Dashboard />
-      {/* <LandingPage /> */}
-    {/* </div> */}
-    </>
+    <SidebarProvider>
+      {/* Full-height shell: the page itself never scrolls, only the panels inside it. */}
+      <div className="flex h-full flex-col overflow-hidden bg-white">
+        <Navbar />
+        <Dashboard />
+      </div>
+    </SidebarProvider>
   );
 };
 
-export default App
+export default App;

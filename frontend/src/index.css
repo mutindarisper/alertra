@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-white text-slate-900 antialiased;
+    /* Prevent the whole page from scrolling — panels scroll internally. */
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  /* Slim, light-mode scrollbars for the internally scrolling panels. */
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.slate.300') transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: theme('colors.slate.300');
+    border-radius: 9999px;
+  }
+}
+
+/* Light-mode Mapbox popup to match the app surface. */
+.mapboxgl-popup-content {
+  @apply rounded-xl border border-slate-200 bg-white p-4 text-slate-900 shadow-panel;
+  max-width: 260px;
+}
+
+.mapboxgl-popup-close-button {
+  @apply pr-1 text-lg text-slate-400 hover:text-slate-600;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+}
+
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib {
+  opacity: 0.75;
+}
