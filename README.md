@@ -135,16 +135,8 @@ stay in sync — clicking a pin highlights its card, and vice versa.
 
 Worth knowing before you dig in:
 
-- **The backend is not wired to the frontend.** Nothing in `frontend/src` calls `localhost:5001` or
-  opens a WebSocket. The backend runs and works on its own, but the dashboard bypasses it.
 - **The GDACS query uses a fixed date window** (`2023-10-06` → `2025-03-14`), hardcoded in
   `Map.tsx`. Results look live but are a frozen range; widen it there when you want current data.
 - **Drone dispatch is a simulation.** `service/drones.ts` is an in-memory fleet of two drones and
   the flight is a `requestAnimationFrame` interpolation — no hardware or API behind it.
-- **`backend`'s `build` and `start` scripts are leftovers.** `build` runs `tsc` but the backend is
-  plain JavaScript with no `tsconfig.json`, and `start` expects a `dist/` that is never produced.
-  Use `npm run dev`.
-- **Unused files:** `frontend/src/components/LandingPage.tsx`, `HalfSignup.tsx`, `src/App.css`, and
-  `src/service/openaiService.tsx` / `cohereService` are not imported anywhere.
-- The root `package.json` carries a single stray dependency (`@mapbox/mapbox-gl-geocoder`) and no
-  scripts; the real manifests are in `frontend/` and `backend/`.
+
