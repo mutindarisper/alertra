@@ -1,50 +1,35 @@
-# React + TypeScript + Vite
+# Alertra — frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The React + TypeScript + Vite dashboard. See the [project README](../README.md) for what Alertra
+is, how the pieces fit together, and the known gaps.
 
-Currently, two official plugins are available:
+## Quick start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+cp .env.example .env   # add your Mapbox token (and Cohere key, if you want the assistant)
+npm run dev            # http://localhost:5173
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Scripts
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+| Script | Description |
+| --- | --- |
+| `npm run dev` | Vite dev server with HMR |
+| `npm run build` | Type-check (`tsc -b`) then build to `dist/` |
+| `npm run preview` | Serve the production build |
+| `npm run lint` | ESLint |
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Notes for working in here
+
+- **Styling** is Tailwind. The light palette lives in `tailwind.config.js` as the `brand` scale
+  (`brand-500` is `#26d3d6`); prefer those tokens over raw hex values. Global base styles and the
+  Mapbox popup overrides are in `src/index.css`.
+- **Shared state** goes through `src/context/sidebar-context.tsx`: the active hazard category, the
+  mobile drawer, the fetched events, and `focusRequest` (which drives fly-to). Adding a new way to
+  select an event means calling `focusEvent(feature)` rather than touching the map directly.
+- **Icons** are `lucide-react`. The map popup is built as an HTML string, so it inlines one SVG
+  constant instead (`PLANE_TAKEOFF_SVG` in `Map.tsx`).
+- **Layout** relies on the page never scrolling: `html`/`body`/`#root` are `height: 100%` with
+  `overflow: hidden`, and `<main>` is the scroll container. Keep `min-h-0` on the flex children or
+  the panels will grow the page instead of scrolling.
